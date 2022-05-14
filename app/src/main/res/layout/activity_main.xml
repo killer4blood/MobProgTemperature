@@ -37,14 +37,13 @@
         android:id="@+id/TViewTemp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="temp"
         android:textSize="48sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnSearch"
-        app:layout_constraintVertical_bias="0.349" />
+        app:layout_constraintVertical_bias="0.287" />
 
     <Button
         android:id="@+id/btnCelcius"
