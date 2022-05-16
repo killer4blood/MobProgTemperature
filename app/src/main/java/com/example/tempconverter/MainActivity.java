@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void getWeatherDetails(View view) {
+    public void getTemp(View view) {
         String tempURL = "";
         String city = cityname.getText().toString().trim();
         if (city.equals("")){
@@ -56,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonresponse = new JSONObject(response);
                         JSONObject jsonobjectmain = jsonresponse.getJSONObject("main");
-                        double temp = jsonobjectmain.getDouble("temp") - 273.15; //this is to convert to celsius
-                        temperature.setText(df.format(temp) + "°C");
+                        double celtemp = jsonobjectmain.getDouble("temp") - 273.15; //this is to convert to celsius
+                        temperature.setText(df.format(celtemp) + "°C");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -72,5 +72,19 @@ public class MainActivity extends AppCompatActivity {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
             requestQueue.add(stringrequest);
         }
+    }
+
+    public void toCelsius(View view) {
+        String fah = temperature.getText().toString().replaceAll("[^0-9\\.]","");
+        double degfah = Double.parseDouble(fah);
+        double degcel = (degfah - 32) * (0.5556);
+        temperature.setText(df.format(degcel) + "°C");
+    }
+
+    public void toFahrenheit(View view) {
+        String cel = temperature.getText().toString().replaceAll("[^0-9\\.]","");
+        double degcel = Double.parseDouble(cel);
+        double degfah = (degcel * (1.8)) + 32;
+        temperature.setText(df.format(degfah) + "°F");
     }
 }
