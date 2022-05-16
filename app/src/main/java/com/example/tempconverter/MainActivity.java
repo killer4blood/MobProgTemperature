@@ -75,16 +75,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void toCelsius(View view) {
-        String fah = temperature.getText().toString().replaceAll("[^0-9\\.]","");
-        double degfah = Double.parseDouble(fah);
-        double degcel = (degfah - 32) * (0.5556);
-        temperature.setText(df.format(degcel) + "°C");
+        if (temperature.getText().toString().contains("C")){
+            Toast.makeText(getApplicationContext(), "Already in celcius", Toast.LENGTH_SHORT).show();
+        } else {
+            String fah = temperature.getText().toString().replaceAll("[^-?[0-9]{1,12}(?:\\.[0-9]{1,4})?$]","");
+            double degfah = Double.parseDouble(fah);
+            double degcel = (degfah - 32) * (0.5556);
+            temperature.setText(df.format(degcel) + "°C");
+        }
     }
 
     public void toFahrenheit(View view) {
-        String cel = temperature.getText().toString().replaceAll("[^0-9\\.]","");
-        double degcel = Double.parseDouble(cel);
-        double degfah = (degcel * (1.8)) + 32;
-        temperature.setText(df.format(degfah) + "°F");
+        if (temperature.getText().toString().contains("F")){
+            Toast.makeText(getApplicationContext(), "Already in fahrenheit", Toast.LENGTH_SHORT).show();
+        } else {
+            String cel = temperature.getText().toString().replaceAll("[^-?[0-9]{1,12}(?:\\.[0-9]{1,4})?$]","");
+            double degcel = Double.parseDouble(cel);
+            double degfah = (degcel * (1.8)) + 32;
+            temperature.setText(df.format(degfah) + "°F");
+        }
     }
 }
