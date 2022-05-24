@@ -2,7 +2,9 @@ package com.example.tempconverter;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -53,11 +55,30 @@ public class MainActivity extends AppCompatActivity {
             StringRequest stringrequest = new StringRequest(Request.Method.POST, tempURL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
+                    String output = "";
                     try {
-                        JSONObject jsonresponse = new JSONObject(response);
-                        JSONObject jsonobjectmain = jsonresponse.getJSONObject("main");
-                        double celtemp = jsonobjectmain.getDouble("temp") - 273.15; //this is to convert to celsius
-                        temperature.setText(df.format(celtemp) + "°C");
+                        JSONObject jsonResponse = new JSONObject(response);
+                        JSONArray jsonArray = jsonResponse.getJSONArray("weather");
+                        JSONObject jsonObjectWeather = jsonArray.getJSONObject(0);
+                        //String description = jsonObjectWeather.getString("description");
+                        JSONObject jsonObjectMain = jsonResponse.getJSONObject("main");
+                        double temp = jsonObjectMain.getDouble("temp") - 273.15;
+                        //double feelsLike = jsonObjectMain.getDouble("feels_like") - 273.15;
+                        float pressure = jsonObjectMain.getInt("pressure");
+                        int humidity = jsonObjectMain.getInt("humidity");
+                        JSONObject jsonObjectWind = jsonResponse.getJSONObject("wind");
+                        String wind = jsonObjectWind.getString("speed");
+                        JSONObject jsonObjectClouds = jsonResponse.getJSONObject("clouds");
+                        String clouds = jsonObjectClouds.getString("all");
+                        //JSONObject jsonObjectSys = jsonResponse.getJSONObject("sys");
+                        //String countryName = jsonObjectSys.getString("country");
+                        //String cityName = jsonResponse.getString("name");
+                        output += " Temp           : " + df.format(temp) + " °C\n"
+                                + " Humidity     : " + humidity + "%\n"
+                                + " Wind Speed: " + wind + "m/s\n"
+                                + " Cloudiness : " + clouds + "%\n"
+                                + " Pressure     : " + pressure + " hPa";
+                        temperature.setText(output);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -75,24 +96,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void toCelsius(View view) {
-        if (temperature.getText().toString().contains("C")){
+        String[] result = temperature.getText().toString().split("\n", 5);
+        if (result[0].contains("C")){
             Toast.makeText(getApplicationContext(), "Already in celcius", Toast.LENGTH_SHORT).show();
         } else {
-            String fah = temperature.getText().toString().replaceAll("[^-?[0-9]{1,12}(?:\\.[0-9]{1,4})?$]","");
+            String fah = result[0].replaceAll("[^-?[0-9]{1,12}(?\\.[0-9]{1,4})?$]","");
+            //String fah = temperature.getText().toString().replaceAll("[^-?[0-9]{1,12}(?:\\.[0-9]{1,4})?$]","");
             double degfah = Double.parseDouble(fah);
             double degcel = (degfah - 32) * (0.5556);
-            temperature.setText(df.format(degcel) + "°C");
+            //temperature.setText(df.format(degcel) + "°C");
+            result[0] = " Temp           : " + df.format(degcel) + " °C\n";
+            String output = TextUtils.join("", result);
+            temperature.setText(output);
         }
     }
 
     public void toFahrenheit(View view) {
-        if (temperature.getText().toString().contains("F")){
+        String[] result = temperature.getText().toString().split("\n", 5);
+        if (result[0].contains("F")){
             Toast.makeText(getApplicationContext(), "Already in fahrenheit", Toast.LENGTH_SHORT).show();
         } else {
-            String cel = temperature.getText().toString().replaceAll("[^-?[0-9]{1,12}(?:\\.[0-9]{1,4})?$]","");
+            String cel = result[0].replaceAll("[^-?[0-9]{1,12}(?\\.[0-9]{1,4})?$]","");
+            //String cel = temperature.getText().toString().replaceAll("[^-?[0-9]{1,12}(?:\\.[0-9]{1,4})?$]","");
             double degcel = Double.parseDouble(cel);
             double degfah = (degcel * (1.8)) + 32;
-            temperature.setText(df.format(degfah) + "°F");
+            //temperature.setText(df.format(degfah) + "°F");
+            result[0] = " Temp           : " + df.format(degfah) + " °F\n";
+            String output = TextUtils.join("", result);
+            temperature.setText(output);
         }
     }
 }
