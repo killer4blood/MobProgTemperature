@@ -1,13 +1,17 @@
 package com.example.tempconverter;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SwitchCompat;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,9 +27,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.Collator;
 import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity {
+    SwitchCompat switchCompat;
     EditText cityname;
     Button celcius, fahrenheit;
     TextView temperature;
@@ -35,6 +41,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+            setTheme(R.style.Theme_Dark);
+        }else{
+            setTheme(R.style.Theme_Light);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -42,6 +55,21 @@ public class MainActivity extends AppCompatActivity {
         celcius = findViewById(R.id.btnCelcius);
         fahrenheit = findViewById(R.id.btnFahrenheit);
         temperature = findViewById(R.id.TViewTemp);
+        switchCompat = findViewById(R.id.bt_switch);
+
+        switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked){
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                }else{
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                }
+
+
+            }
+        });
 
     }
 
@@ -58,21 +86,14 @@ public class MainActivity extends AppCompatActivity {
                     String output = "";
                     try {
                         JSONObject jsonResponse = new JSONObject(response);
-                        JSONArray jsonArray = jsonResponse.getJSONArray("weather");
-                        JSONObject jsonObjectWeather = jsonArray.getJSONObject(0);
-                        //String description = jsonObjectWeather.getString("description");
                         JSONObject jsonObjectMain = jsonResponse.getJSONObject("main");
                         double temp = jsonObjectMain.getDouble("temp") - 273.15;
-                        //double feelsLike = jsonObjectMain.getDouble("feels_like") - 273.15;
                         float pressure = jsonObjectMain.getInt("pressure");
                         int humidity = jsonObjectMain.getInt("humidity");
                         JSONObject jsonObjectWind = jsonResponse.getJSONObject("wind");
                         String wind = jsonObjectWind.getString("speed");
                         JSONObject jsonObjectClouds = jsonResponse.getJSONObject("clouds");
                         String clouds = jsonObjectClouds.getString("all");
-                        //JSONObject jsonObjectSys = jsonResponse.getJSONObject("sys");
-                        //String countryName = jsonObjectSys.getString("country");
-                        //String cityName = jsonResponse.getString("name");
                         output += " Temp           : " + df.format(temp) + " °C\n"
                                 + " Humidity     : " + humidity + "%\n"
                                 + " Wind Speed: " + wind + "m/s\n"
@@ -99,12 +120,12 @@ public class MainActivity extends AppCompatActivity {
         String[] result = temperature.getText().toString().split("\n", 2);
         if (result[0].contains("C")){
             Toast.makeText(getApplicationContext(), "Already in celcius", Toast.LENGTH_SHORT).show();
+        } else if (result[0].equals("")){
+            Toast.makeText(getApplicationContext(), "Input a city name and click 'Search'", Toast.LENGTH_SHORT).show();
         } else {
             String fah = result[0].replaceAll("[^-?[0-9]{1,12}(?\\.[0-9]{1,4})?$]","");
-            //String fah = temperature.getText().toString().replaceAll("[^-?[0-9]{1,12}(?:\\.[0-9]{1,4})?$]","");
             double degfah = Double.parseDouble(fah);
             double degcel = (degfah - 32) * (0.5556);
-            //temperature.setText(df.format(degcel) + "°C");
             result[0] = " Temp           : " + df.format(degcel) + " °C\n";
             String output = TextUtils.join("", result);
             temperature.setText(output);
@@ -115,12 +136,12 @@ public class MainActivity extends AppCompatActivity {
         String[] result = temperature.getText().toString().split("\n", 2);
         if (result[0].contains("F")){
             Toast.makeText(getApplicationContext(), "Already in fahrenheit", Toast.LENGTH_SHORT).show();
+        } else if (result[0].equals("")){
+            Toast.makeText(getApplicationContext(), "Input a city name and click 'Search'", Toast.LENGTH_SHORT).show();
         } else {
             String cel = result[0].replaceAll("[^-?[0-9]{1,12}(?\\.[0-9]{1,4})?$]","");
-            //String cel = temperature.getText().toString().replaceAll("[^-?[0-9]{1,12}(?:\\.[0-9]{1,4})?$]","");
             double degcel = Double.parseDouble(cel);
             double degfah = (degcel * (1.8)) + 32;
-            //temperature.setText(df.format(degfah) + "°F");
             result[0] = " Temp           : " + df.format(degfah) + " °F\n";
             String output = TextUtils.join("", result);
             temperature.setText(output);
