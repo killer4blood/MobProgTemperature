@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void toCelsius(View view) {
-        String[] result = temperature.getText().toString().split("\n", 5);
+        String[] result = temperature.getText().toString().split("\n", 2);
         if (result[0].contains("C")){
             Toast.makeText(getApplicationContext(), "Already in celcius", Toast.LENGTH_SHORT).show();
         } else {
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void toFahrenheit(View view) {
-        String[] result = temperature.getText().toString().split("\n", 5);
+        String[] result = temperature.getText().toString().split("\n", 2);
         if (result[0].contains("F")){
             Toast.makeText(getApplicationContext(), "Already in fahrenheit", Toast.LENGTH_SHORT).show();
         } else {
